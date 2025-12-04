@@ -190,80 +190,70 @@
       filter: drop-shadow(0 0 6px rgba(250,250,250,0.7));
     }
 
-    /* ---- サイズ / 個数 ---- */
-
     .size-buttons {
       display: flex;
-      flex-direction: column;
       gap: 8px;
     }
 
-    .size-row {
-      padding: 10px 12px;
-      border-radius: 18px;
+    .size-button {
+      flex: 1;
+      padding: 10px 0 8px;
+      border-radius: 16px;
       border: 1px solid rgba(148,163,184,0.5);
       background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      text-align: center;
       font-size: 13px;
+      cursor: pointer;
+      color: #e5e7eb;
+      position: relative;
+      overflow: hidden;
     }
 
     .size-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .size-name-line {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-
-    .size-letter {
-      font-size: 15px;
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
     }
 
     .size-price {
-      font-size: 13px;
+      display: block;
+      font-size: 11px;
       color: #facc15;
     }
 
-    .size-sub {
+    .size-desc {
+      display: block;
       font-size: 10px;
       color: #9ca3af;
+      margin-top: 2px;
       font-weight: 500;
     }
 
-    .size-qty {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      font-size: 11px;
-      color: #e5e7eb;
+    .size-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(248,250,252,0.35), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.18s ease-out;
     }
 
-    .qty-select {
-      width: 76px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15,23,42,0.9);
-      color: var(--text-main);
-      font-size: 13px;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image:
-        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
-        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
-      background-position:
-        calc(100% - 14px) calc(50% - 2px),
-        calc(100% - 10px) calc(50% - 2px);
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-      padding-right: 26px;
+    .size-button:active::after {
+      opacity: 0.8;
+    }
+
+    .size-button.active {
+      background: radial-gradient(circle at top, #fb7185, #f97316);
+      border-color: rgba(254,249,195,0.9);
+      color: #111827;
+      box-shadow:
+        0 0 14px rgba(251,113,133,0.9),
+        0 12px 22px rgba(15,23,42,0.9);
+    }
+
+    .size-button.active .size-desc {
+      color: #111827;
+      font-weight: 700;
     }
 
     input, select, textarea {
@@ -280,6 +270,11 @@
       appearance: none;
     }
 
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
     input::placeholder,
     textarea::placeholder {
       color: #6b7280;
@@ -292,8 +287,7 @@
         0 0 18px rgba(56,189,248,0.7);
     }
 
-    /* ▼ セレクトの▼アイコン */
-    select:not(.qty-select) {
+    select {
       background-image:
         linear-gradient(45deg, transparent 50%, #9ca3af 50%),
         linear-gradient(135deg, #9ca3af 50%, transparent 50%);
@@ -303,11 +297,6 @@
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
       padding-right: 26px;
-    }
-
-    textarea {
-      min-height: 70px;
-      resize: vertical;
     }
 
     .toppings-wrap {
@@ -428,76 +417,46 @@
 
       <div class="divider"></div>
 
-      <!-- サイズ＋個数 -->
+      <!-- サイズ＋金額 -->
       <div class="label">
         <span class="label-icon">🧁</span>
-        SIZE &amp; QTY
+        SIZE
       </div>
-
       <div class="size-buttons">
-        <div class="size-row">
-          <div class="size-main">
-            <div class="size-name-line">
-              <span class="size-letter">S</span>
-              <span class="size-price">¥800</span>
-            </div>
-            <div class="size-sub">light &amp; snack</div>
-          </div>
-          <div class="size-qty">
-            <span>数量</span>
-            <select id="qtyS" class="qty-select">
-              <option value="0">0杯</option>
-              <option value="1">1杯</option>
-              <option value="2">2杯</option>
-              <option value="3">3杯</option>
-              <option value="4">4杯</option>
-              <option value="5">5杯</option>
-            </select>
-          </div>
+        <div class="size-button" data-size="S">
+          <span class="size-main">S</span>
+          <span class="size-price">¥800</span>
+          <span class="size-desc">light &amp; snack</span>
         </div>
-
-        <div class="size-row">
-          <div class="size-main">
-            <div class="size-name-line">
-              <span class="size-letter">M</span>
-              <span class="size-price">¥1,000</span>
-            </div>
-            <div class="size-sub">classic mood</div>
-          </div>
-          <div class="size-qty">
-            <span>数量</span>
-            <select id="qtyM" class="qty-select">
-              <option value="0">0杯</option>
-              <option value="1">1杯</option>
-              <option value="2">2杯</option>
-              <option value="3">3杯</option>
-              <option value="4">4杯</option>
-              <option value="5">5杯</option>
-            </select>
-          </div>
+        <div class="size-button" data-size="M">
+          <span class="size-main">M</span>
+          <span class="size-price">¥1,000</span>
+          <span class="size-desc">classic mood</span>
         </div>
-
-        <div class="size-row">
-          <div class="size-main">
-            <div class="size-name-line">
-              <span class="size-letter">L</span>
-              <span class="size-price">¥1,200</span>
-            </div>
-            <div class="size-sub">for sharing</div>
-          </div>
-          <div class="size-qty">
-            <span>数量</span>
-            <select id="qtyL" class="qty-select">
-              <option value="0">0杯</option>
-              <option value="1">1杯</option>
-              <option value="2">2杯</option>
-              <option value="3">3杯</option>
-              <option value="4">4杯</option>
-              <option value="5">5杯</option>
-            </select>
-          </div>
+        <div class="size-button" data-size="L">
+          <span class="size-main">L</span>
+          <span class="size-price">¥1,200</span>
+          <span class="size-desc">for sharing</span>
         </div>
       </div>
+
+      <!-- 数量 -->
+      <div class="label">
+        <span class="label-icon">🔢</span>
+        QUANTITY
+      </div>
+      <select id="quantity">
+        <option value="1">1杯</option>
+        <option value="2">2杯</option>
+        <option value="3">3杯</option>
+        <option value="4">4杯</option>
+        <option value="5">5杯</option>
+        <option value="6">6杯</option>
+        <option value="7">7杯</option>
+        <option value="8">8杯</option>
+        <option value="9">9杯</option>
+        <option value="10">10杯</option>
+      </select>
 
       <!-- トッピング -->
       <div class="label" style="margin-top: 14px;">
@@ -526,7 +485,7 @@
       </div>
       <div class="helper">※ トッピングは複数選択できます（未選択でもOK）。</div>
 
-      <!-- 特記事項 -->
+      <!-- コメント -->
       <div class="label">
         <span class="label-icon">📝</span>
         COMMENT
@@ -540,17 +499,15 @@
       </div>
       <select id="pickupDate">
         <option value="">受け取り日を選択してください</option>
-        <!-- JSで営業日のみ生成 -->
       </select>
 
-      <!-- 受け取り時間（10分刻み） -->
+      <!-- 受け取り時間 -->
       <div class="label">
         <span class="label-icon">⏰</span>
         PICKUP TIME
       </div>
       <select id="pickupTime">
         <option value="">受け取り時間を選択してください</option>
-        <!-- JSで10分刻みを自動生成 -->
       </select>
 
       <!-- 名前 -->
@@ -577,27 +534,21 @@
 
   <script>
     // =========★ 設定エリア ★=========
-    const LIFF_ID = "2008627850-8BaKy2Zo"; // 例: "2008xxxxxx-xxxxx"
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_mSQjj0v9joqj_WBZdtGKwh07HFBz-vJF-AG0Dal2N5sLilG9vSvziWphTovnH5I/exec"; // https://script.google.com/macros/s/～/exec
-
-    // 価格テーブル（お店の価格に合わせて変更OK）
-    const PRICE_TABLE = {
-      S: 800,
-      M: 1000,
-      L: 1200,
-    };
+    const LIFF_ID = "2008627850-8BaKy2Zo";
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_mSQjj0v9joqj_WBZdtGKwh07HFBz-vJF-AG0Dal2N5sLilG9vSvziWphTovnH5I/exec";
 
     const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
-    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
+    const WEEKLY_CLOSED = [0];   // 定休日（0:日曜）
     const CLOSED_DATES = [
-      // 不定休 "YYYY-MM-DD"
-      // 例："2025-12-10"
+      // "2025-12-10" など不定休があればここに
     ];
-    // ==============================
+    // ================================
 
+    let selectedSize = null;
     let selectedToppings = new Set();
     let userId = null;
 
+    // 休み判定
     function isClosedDate(dateObj) {
       const dayOfWeek = dateObj.getDay();
       if (WEEKLY_CLOSED.includes(dayOfWeek)) return true;
@@ -608,9 +559,11 @@
       const value = `${yyyy}-${mm}-${dd}`;
 
       if (CLOSED_DATES.includes(value)) return true;
+
       return false;
     }
 
+    // 日付プルダウン生成
     function populateDateOptions() {
       const select = document.getElementById("pickupDate");
       if (!select) return;
@@ -644,6 +597,7 @@
       }
     }
 
+    // 時間プルダウン生成（10分刻み）
     function populateTimeOptions() {
       const select = document.getElementById("pickupTime");
       if (!select) return;
@@ -655,9 +609,9 @@
       placeholder.selected = true;
       select.appendChild(placeholder);
 
-      const startHour = 10;
-      const endHour   = 22;
-      const intervalMinutes = 10;
+      const startHour = 10;          // 開始時間
+      const endHour   = 22;          // 終了時間
+      const intervalMinutes = 10;    // 10分刻み
 
       for (let h = startHour; h <= endHour; h++) {
         for (let m = 0; m < 60; m += intervalMinutes) {
@@ -672,7 +626,18 @@
       }
     }
 
-    // ▼ トッピング（複数）
+    // サイズボタン
+    document.querySelectorAll(".size-button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".size-button")
+          .forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedSize = btn.dataset.size;
+      });
+    });
+
+    // トッピング（複数）
     document.querySelectorAll(".topping-chip").forEach(chip => {
       chip.addEventListener("click", () => {
         const topping = chip.dataset.topping;
@@ -686,7 +651,7 @@
       });
     });
 
-    // ▼ LIFF初期化（userId を表示できるように）
+    // LIFF 初期化 & userId 表示
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
@@ -699,38 +664,39 @@
         const profile = await liff.getProfile();
         userId = profile.userId;
 
-        // 一度 userId を確認したい場合に使えるメッセージ
-        // 必要なければコメントアウトしてOK
-        // alert("あなたの userId は\n\n" + userId + "\n\nです。");
+        // 1セッションにつき1回だけ userId を表示
+        if (!sessionStorage.getItem("acai_userid_shown")) {
+          alert(
+            "あなたの userId は\n\n" +
+            userId +
+            "\n\nです。\n\nconfig.gs の ACAI_ADMIN_TO_ID に設定する場合はここからコピペしてください。"
+          );
+          sessionStorage.setItem("acai_userid_shown", "1");
+        }
       } catch (e) {
         alert("LIFF init error: " + e.message);
         console.error(e);
       }
     }
 
-    // ▼ 初期処理
+    // 初期処理
     populateDateOptions();
     populateTimeOptions();
     initLiff();
 
-    // ▼ 送信処理
+    // 送信処理
     document.getElementById("submitBtn").addEventListener("click", async () => {
-      const qtyS = parseInt(document.getElementById("qtyS").value, 10) || 0;
-      const qtyM = parseInt(document.getElementById("qtyM").value, 10) || 0;
-      const qtyL = parseInt(document.getElementById("qtyL").value, 10) || 0;
+      const pickupDate   = document.getElementById("pickupDate").value;
+      const pickupTime   = document.getElementById("pickupTime").value;
+      const customerName = document.getElementById("customerName").value.trim();
+      const tel          = document.getElementById("tel").value.trim();
+      const quantity     = Number(document.getElementById("quantity").value || 1);
+      const comment      = document.getElementById("comment").value.trim();
 
-      const totalQty = qtyS + qtyM + qtyL;
-      if (totalQty === 0) {
-        alert("S / M / L のいずれかの数量を選択してください。");
+      if (!selectedSize) {
+        alert("サイズを選択してください。");
         return;
       }
-
-      const pickupDate = document.getElementById("pickupDate").value;
-      const pickupTime = document.getElementById("pickupTime").value;
-      const customerName = document.getElementById("customerName").value.trim();
-      const tel = document.getElementById("tel").value.trim();
-      const comment = document.getElementById("comment").value.trim();
-
       if (!pickupDate) {
         alert("受け取り日を選択してください。");
         return;
@@ -749,18 +715,14 @@
       }
 
       const payload = {
-        sizes: {
-          S: qtyS,
-          M: qtyM,
-          L: qtyL,
-        },
-        priceTable: PRICE_TABLE,
+        size: selectedSize,
         pickupDate,
         pickupTime,
         customerName,
         tel,
         userId,
         toppings: Array.from(selectedToppings),
+        quantity,
         comment,
       };
 
@@ -769,19 +731,15 @@
       btn.textContent = "送信中…";
 
       try {
-        const res = await fetch(WEBAPP_URL, {
+        // CORS 回避：no-cors で投げる（レスポンス中身は読まない）
+        await fetch(WEBAPP_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          mode: "no-cors",
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("HTTP error " + res.status);
-        const data = await res.json();
 
-        if (data.status !== "ok") {
-          throw new Error(data.message || "unknown error");
-        }
+        alert("ご予約を受け付けました。\nLINEのメッセージをご確認ください。");
 
-        alert("ご予約を受け付けました。LINEのメッセージをご確認ください。");
         if (liff.isInClient()) {
           liff.closeWindow();
         }
