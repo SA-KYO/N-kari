@@ -269,7 +269,6 @@
         0 0 18px rgba(56,189,248,0.7);
     }
 
-    /* ▼ セレクトの▼アイコン */
     select {
       background-image:
         linear-gradient(45deg, transparent 50%, #9ca3af 50%),
@@ -447,24 +446,22 @@
       </div>
       <div class="helper">※ トッピングは複数選択できます（未選択でもOK）。</div>
 
-      <!-- 受け取り日（セレクト） -->
+      <!-- 受け取り日 -->
       <div class="label">
         <span class="label-icon">📅</span>
         DATE
       </div>
       <select id="pickupDate">
         <option value="">受け取り日を選択してください</option>
-        <!-- JSで営業日のみ生成 -->
       </select>
 
-      <!-- 受け取り時間（10分刻み） -->
+      <!-- 受け取り時間 -->
       <div class="label">
         <span class="label-icon">⏰</span>
         PICKUP TIME
       </div>
       <select id="pickupTime">
         <option value="">受け取り時間を選択してください</option>
-        <!-- JSで10分刻みを自動生成 -->
       </select>
 
       <!-- 名前 -->
@@ -490,25 +487,22 @@
   </div>
 
   <script>
-    // =========★ 設定エリア（ここだけ触ればOK）★ =========
-    const LIFF_ID = "2008627850-8BaKy2Zo";          // ★ LIFF ID
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz4yVsz-Wjm6GhUt6SuqVvqSwfKMBClkYAKJ8d894UFH1KKdonNIuFmALHpIc22jnbL/exec";   // ★ GAS WebアプリのURL
+    // =========★ 設定エリア ★ =========
+    const LIFF_ID = "2008627850-8BaKy2Zo";
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz4yVsz-Wjm6GhUt6SuqVvqSwfKMBClkYAKJ8d894UFH1KKdonNIuFmALHpIc22jnbL/exec";
 
     const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
-    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
-                                 // 例）日月休みなら [0,1]、曜日休みナシなら []
+    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,...）
 
     const CLOSED_DATES = [
-      // 不定休の日を "YYYY-MM-DD" 形式で書くだけ
-      // 例："2025-12-10", "2025-12-25"
+      // "2025-12-10",
     ];
-    // ===============================================
+    // ==================================
 
     let selectedSize = null;
     let selectedToppings = new Set();
     let userId = null;
 
-    // ▼ この日が休みかどうか？
     function isClosedDate(dateObj) {
       const dayOfWeek = dateObj.getDay();
       if (WEEKLY_CLOSED.includes(dayOfWeek)) return true;
@@ -519,11 +513,9 @@
       const value = `${yyyy}-${mm}-${dd}`;
 
       if (CLOSED_DATES.includes(value)) return true;
-
       return false;
     }
 
-    // ▼ 日付プルダウン生成（営業日のみ）
     function populateDateOptions() {
       const select = document.getElementById("pickupDate");
       if (!select) return;
@@ -542,7 +534,7 @@
         const d = new Date(today);
         d.setDate(d.getDate() + i);
 
-        if (isClosedDate(d)) continue;  // 休みの日は表示しない
+        if (isClosedDate(d)) continue;
 
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -557,7 +549,6 @@
       }
     }
 
-    // ▼ 時間プルダウン生成（10分刻み）
     function populateTimeOptions() {
       const select = document.getElementById("pickupTime");
       if (!select) return;
@@ -569,9 +560,9 @@
       placeholder.selected = true;
       select.appendChild(placeholder);
 
-      const startHour = 10;          // 営業開始時間（10時）
-      const endHour   = 22;          // 営業終了時間（22時）
-      const intervalMinutes = 10;    // 10分刻み
+      const startHour = 10;
+      const endHour   = 22;
+      const intervalMinutes = 10;
 
       for (let h = startHour; h <= endHour; h++) {
         for (let m = 0; m < 60; m += intervalMinutes) {
@@ -586,18 +577,16 @@
       }
     }
 
-    // ▼ サイズボタン
+    // サイズボタン
     document.querySelectorAll(".size-button").forEach(btn => {
       btn.addEventListener("click", () => {
-        document
-          .querySelectorAll(".size-button")
-          .forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".size-button").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         selectedSize = btn.dataset.size;
       });
     });
 
-    // ▼ トッピング（複数）
+    // トッピング
     document.querySelectorAll(".topping-chip").forEach(chip => {
       chip.addEventListener("click", () => {
         const topping = chip.dataset.topping;
@@ -611,37 +600,28 @@
       });
     });
 
-// ▼ LIFF初期化（userId を強制表示するバージョン）
-async function initLiff() {
-  try {
-    await liff.init({ liffId: LIFF_ID });
+    // ▼ LIFF初期化（userId 表示付き）
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
 
-    // ログインしてなければログインさせる
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+
+        const profile = await liff.getProfile();
+        userId = profile.userId;
+
+        alert("あなたの userId は\n\n" + userId + "\n\nです。\n\nこれを config.gs の ACAI_ADMIN_TO_ID にコピペしてください。");
+      } catch (e) {
+        alert("LIFF init error: " + e.message);
+        console.error(e);
+      }
     }
 
-    // プロフィール取得
-    const profile = await liff.getProfile();
-    userId = profile.userId;
-
-    // ★ここで必ず userId を表示させる★
-    alert("あなたの userId は\n\n" + userId + "\n\nです。\n\nこれを config.gs の ACAI_ADMIN_TO_ID にコピペしてください。");
-
-  } catch (e) {
-    alert("LIFF init error: " + e.message);
-    console.error(e);
-  }
-}
-
-    // ▼ 初期処理
-    populateDateOptions();
-    populateTimeOptions();
-    initLiff();
-
-    // ▼ 送信処理
-    document.getElementById("submitBtn").addEventListener("click", async () => {
+    // ▼ フォーム送信（デバッグ用）
+    async function submitForm() {
       const pickupDate = document.getElementById("pickupDate").value;
       const pickupTime = document.getElementById("pickupTime").value;
       const customerName = document.getElementById("customerName").value.trim();
@@ -675,7 +655,7 @@ async function initLiff() {
         customerName,
         tel,
         userId,
-        toppings: Array.from(selectedToppings)
+        toppings: Array.from(selectedToppings),
       };
 
       const btn = document.getElementById("submitBtn");
@@ -688,21 +668,45 @@ async function initLiff() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("HTTP error " + res.status);
-        const data = await res.json();
 
-        alert("ご予約を受け付けました。LINEのメッセージをご確認ください。");
+        const text = await res.text();  // ★まずは生テキストで受け取る
+        alert("GASからの返事:\n\n" + text);  // ★そのまま画面に表示
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          throw new Error("サーバーからJSON以外の形式が返ってきました。\n\n返却値:\n" + text);
+        }
+
+        if (!res.ok) {
+          throw new Error("HTTPエラー " + res.status);
+        }
+        if (data.status !== "ok" && data.status !== "success") {
+          throw new Error("status が ok ではありません。\nstatus: " + data.status + "\nmessage: " + (data.message || ""));
+        }
+
+        alert("ご予約を受け付けました。LINEメッセージをご確認ください。");
+
         if (liff.isInClient()) {
           liff.closeWindow();
         }
       } catch (e) {
         console.error(e);
-        alert("エラーが発生しました。時間をおいて再度お試しください。");
+        alert("送信エラー:\n" + e.message);
       } finally {
         btn.disabled = false;
         btn.textContent = "この内容で予約する";
       }
-    });
+    }
+
+    // 初期処理
+    populateDateOptions();
+    populateTimeOptions();
+    initLiff();
+
+    // ボタンに送信処理を紐付け
+    document.getElementById("submitBtn").addEventListener("click", submitForm);
   </script>
 </body>
 </html>
