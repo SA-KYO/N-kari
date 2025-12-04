@@ -631,11 +631,10 @@
         
         // 必要なら displayName を初期値にセット
         // document.getElementById("customerName").value = profile.displayName;
-      } catch (e) {
-        alert("LIFFの初期化に失敗しました。時間をおいて再度お試しください。");
-        console.error(e);
-      }
-    }
+  } catch (e) {
+    alert("LIFF init error: " + e.message);
+    console.error(e);
+  }
 
     // ▼ 初期処理
     populateDateOptions();
