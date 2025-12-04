@@ -489,7 +489,7 @@
   <script>
     // =========★ 設定エリア ★ =========
     const LIFF_ID = "2008627850-8BaKy2Zo";
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz4yVsz-Wjm6GhUt6SuqVvqSwfKMBClkYAKJ8d894UFH1KKdonNIuFmALHpIc22jnbL/exec";
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzGVNYCZHgW4Y7pkjx9nJXb1Vr6hACnRuMDl-vtQ97OTrfvymAPkQcF7o_N0yEcM6Ae/exec";
 
     const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
     const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,...）
@@ -620,85 +620,85 @@
       }
     }
 
-    // ▼ フォーム送信（デバッグ用）
-    async function submitForm() {
-      const pickupDate = document.getElementById("pickupDate").value;
-      const pickupTime = document.getElementById("pickupTime").value;
-      const customerName = document.getElementById("customerName").value.trim();
-      const tel = document.getElementById("tel").value.trim();
+// ▼ フォーム送信（デバッグ用）
+async function submitForm() {
+  const pickupDate = document.getElementById("pickupDate").value;
+  const pickupTime = document.getElementById("pickupTime").value;
+  const customerName = document.getElementById("customerName").value.trim();
+  const tel = document.getElementById("tel").value.trim();
 
-      if (!selectedSize) {
-        alert("サイズを選択してください。");
-        return;
-      }
-      if (!pickupDate) {
-        alert("受け取り日を選択してください。");
-        return;
-      }
-      if (!pickupTime) {
-        alert("受け取り時間を選択してください。");
-        return;
-      }
-      if (!customerName) {
-        alert("お名前を入力してください。");
-        return;
-      }
-      if (!tel) {
-        alert("電話番号を入力してください。");
-        return;
-      }
+  if (!selectedSize) {
+    alert("サイズを選択してください。");
+    return;
+  }
+  if (!pickupDate) {
+    alert("受け取り日を選択してください。");
+    return;
+  }
+  if (!pickupTime) {
+    alert("受け取り時間を選択してください。");
+    return;
+  }
+  if (!customerName) {
+    alert("お名前を入力してください。");
+    return;
+  }
+  if (!tel) {
+    alert("電話番号を入力してください。");
+    return;
+  }
 
-      const payload = {
-        size: selectedSize,
-        pickupDate,
-        pickupTime,
-        customerName,
-        tel,
-        userId,
-        toppings: Array.from(selectedToppings),
-      };
+  const payload = {
+    size: selectedSize,
+    pickupDate,
+    pickupTime,
+    customerName,
+    tel,
+    userId,
+    toppings: Array.from(selectedToppings),
+  };
 
-      const btn = document.getElementById("submitBtn");
-      btn.disabled = true;
-      btn.textContent = "送信中…";
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "送信中…";
 
-      try {
-        const res = await fetch(WEBAPP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+  try {
+    // ★ヘッダーを付けずにそのままPOST（CORSをシンプルに）
+    const res = await fetch(WEBAPP_URL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
 
-        const text = await res.text();  // ★まずは生テキストで受け取る
-        alert("GASからの返事:\n\n" + text);  // ★そのまま画面に表示
+    const text = await res.text();
+    alert("GASからの返事:\n\n" + text);
 
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          throw new Error("サーバーからJSON以外の形式が返ってきました。\n\n返却値:\n" + text);
-        }
-
-        if (!res.ok) {
-          throw new Error("HTTPエラー " + res.status);
-        }
-        if (data.status !== "ok" && data.status !== "success") {
-          throw new Error("status が ok ではありません。\nstatus: " + data.status + "\nmessage: " + (data.message || ""));
-        }
-
-        alert("ご予約を受け付けました。LINEメッセージをご確認ください。");
-
-        if (liff.isInClient()) {
-          liff.closeWindow();
-        }
-      } catch (e) {
-        console.error(e);
-        alert("送信エラー:\n" + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "この内容で予約する";
-      }
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      throw new Error("サーバーからJSON以外が返ってきました。\n\n返却値:\n" + text);
     }
+
+    if (!res.ok) {
+      throw new Error("HTTPエラー " + res.status);
+    }
+    if (data.status !== "ok") {
+      throw new Error("status が ok ではありません。\nstatus: " + data.status);
+    }
+
+    alert("ご予約を受け付けました。LINEメッセージをご確認ください。");
+
+    if (liff.isInClient()) {
+      liff.closeWindow();
+    }
+  } catch (e) {
+    console.error(e);
+    alert("送信エラー:\n" + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "この内容で予約する";
+  }
+}
 
     // 初期処理
     populateDateOptions();
