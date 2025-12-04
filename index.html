@@ -56,10 +56,9 @@
       padding: 20px 18px 18px;
       border-radius: 24px;
       position: relative;
-      background:
-        radial-gradient(circle at top left, rgba(56,189,248,0.15), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(248,113,113,0.15), transparent 55%),
-        rgba(15,23,42,0.75);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.15), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(248,113,113,0.15), transparent 55%),
+                  rgba(15,23,42,0.75);
       box-shadow:
         0 24px 50px rgba(0,0,0,0.85),
         0 0 0 1px rgba(148,163,184,0.35);
@@ -191,69 +190,83 @@
       filter: drop-shadow(0 0 6px rgba(250,250,250,0.7));
     }
 
+    /* ---- サイズ / 個数 ---- */
+
     .size-buttons {
       display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .size-button {
-      flex: 1;
-      padding: 10px 0 8px;
-      border-radius: 999px;
+    .size-row {
+      padding: 10px 12px;
+      border-radius: 18px;
       border: 1px solid rgba(148,163,184,0.5);
       background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 13px;
-      cursor: pointer;
-      color: #e5e7eb;
-      position: relative;
-      overflow: hidden;
     }
 
-    .size-button span.sub {
-      display: block;
+    .size-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .size-name-line {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .size-letter {
+      font-size: 15px;
+    }
+
+    .size-price {
+      font-size: 13px;
+      color: #facc15;
+    }
+
+    .size-sub {
       font-size: 10px;
       color: #9ca3af;
-      margin-top: 2px;
       font-weight: 500;
     }
 
-    .size-button span.price {
-      display: block;
+    .size-qty {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
       font-size: 11px;
-      margin-top: 2px;
-      color: #fde68a;
+      color: #e5e7eb;
     }
 
-    .size-button::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(248,250,252,0.35), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.18s ease-out;
+    .qty-select {
+      width: 76px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-main);
+      font-size: 13px;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) calc(50% - 2px),
+        calc(100% - 10px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 26px;
     }
 
-    .size-button:active::after {
-      opacity: 0.8;
-    }
-
-    .size-button.active {
-      background: radial-gradient(circle at top, #fb7185, #f97316);
-      border-color: rgba(254,249,195,0.9);
-      color: #111827;
-      box-shadow:
-        0 0 14px rgba(251,113,133,0.9),
-        0 12px 22px rgba(15,23,42,0.9);
-    }
-
-    .size-button.active span.sub {
-      color: #111827;
-      font-weight: 700;
-    }
-
-    input,
-    select {
+    input, select, textarea {
       width: 100%;
       padding: 10px 11px;
       font-size: 13px;
@@ -267,35 +280,20 @@
       appearance: none;
     }
 
-    textarea {
-      width: 100%;
-      padding: 10px 11px;
-      font-size: 13px;
-      border-radius: 12px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15,23,42,0.85);
-      color: var(--text-main);
-      outline: none;
-      box-shadow: 0 0 0 1px rgba(15,23,42,0.8);
-      resize: vertical;
-      min-height: 70px;
-    }
-
     input::placeholder,
     textarea::placeholder {
       color: #6b7280;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: rgba(56,189,248,0.9);
       box-shadow:
         0 0 0 1px rgba(56,189,248,0.7),
         0 0 18px rgba(56,189,248,0.7);
     }
 
-    select {
+    /* ▼ セレクトの▼アイコン */
+    select:not(.qty-select) {
       background-image:
         linear-gradient(45deg, transparent 50%, #9ca3af 50%),
         linear-gradient(135deg, #9ca3af 50%, transparent 50%);
@@ -305,6 +303,11 @@
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
       padding-right: 26px;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
     }
 
     .toppings-wrap {
@@ -425,40 +428,76 @@
 
       <div class="divider"></div>
 
-      <!-- サイズ -->
+      <!-- サイズ＋個数 -->
       <div class="label">
         <span class="label-icon">🧁</span>
-        SIZE
-      </div>
-      <div class="size-buttons">
-        <div class="size-button" data-size="S">
-          S
-          <span class="sub">light &amp; snack</span>
-          <!-- price は JS で自動挿入 -->
-        </div>
-        <div class="size-button" data-size="M">
-          M
-          <span class="sub">classic mood</span>
-        </div>
-        <div class="size-button" data-size="L">
-          L
-          <span class="sub">for sharing</span>
-        </div>
+        SIZE &amp; QTY
       </div>
 
-      <!-- 個数 -->
-      <div class="label">
-        <span class="label-icon">🥤</span>
-        QUANTITY
+      <div class="size-buttons">
+        <div class="size-row">
+          <div class="size-main">
+            <div class="size-name-line">
+              <span class="size-letter">S</span>
+              <span class="size-price">¥800</span>
+            </div>
+            <div class="size-sub">light &amp; snack</div>
+          </div>
+          <div class="size-qty">
+            <span>数量</span>
+            <select id="qtyS" class="qty-select">
+              <option value="0">0杯</option>
+              <option value="1">1杯</option>
+              <option value="2">2杯</option>
+              <option value="3">3杯</option>
+              <option value="4">4杯</option>
+              <option value="5">5杯</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="size-row">
+          <div class="size-main">
+            <div class="size-name-line">
+              <span class="size-letter">M</span>
+              <span class="size-price">¥1,000</span>
+            </div>
+            <div class="size-sub">classic mood</div>
+          </div>
+          <div class="size-qty">
+            <span>数量</span>
+            <select id="qtyM" class="qty-select">
+              <option value="0">0杯</option>
+              <option value="1">1杯</option>
+              <option value="2">2杯</option>
+              <option value="3">3杯</option>
+              <option value="4">4杯</option>
+              <option value="5">5杯</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="size-row">
+          <div class="size-main">
+            <div class="size-name-line">
+              <span class="size-letter">L</span>
+              <span class="size-price">¥1,200</span>
+            </div>
+            <div class="size-sub">for sharing</div>
+          </div>
+          <div class="size-qty">
+            <span>数量</span>
+            <select id="qtyL" class="qty-select">
+              <option value="0">0杯</option>
+              <option value="1">1杯</option>
+              <option value="2">2杯</option>
+              <option value="3">3杯</option>
+              <option value="4">4杯</option>
+              <option value="5">5杯</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <select id="quantity">
-        <option value="1">1杯</option>
-        <option value="2">2杯</option>
-        <option value="3">3杯</option>
-        <option value="4">4杯</option>
-        <option value="5">5杯</option>
-      </select>
-      <div class="helper">※ 複数杯ご注文の場合はこちらで個数を指定してください。</div>
 
       <!-- トッピング -->
       <div class="label" style="margin-top: 14px;">
@@ -485,7 +524,14 @@
           <span class="icon">💪</span><span>プロテイン</span>
         </div>
       </div>
-      <div class="helper">※ チップで選択したうえで、細かい指定は下のコメント欄へ。</div>
+      <div class="helper">※ トッピングは複数選択できます（未選択でもOK）。</div>
+
+      <!-- 特記事項 -->
+      <div class="label">
+        <span class="label-icon">📝</span>
+        COMMENT
+      </div>
+      <textarea id="comment" placeholder="トッピングの増減や苦手なものなどあればご記入ください（任意）"></textarea>
 
       <!-- 受け取り日 -->
       <div class="label">
@@ -494,15 +540,17 @@
       </div>
       <select id="pickupDate">
         <option value="">受け取り日を選択してください</option>
+        <!-- JSで営業日のみ生成 -->
       </select>
 
-      <!-- 受け取り時間 -->
+      <!-- 受け取り時間（10分刻み） -->
       <div class="label">
         <span class="label-icon">⏰</span>
         PICKUP TIME
       </div>
       <select id="pickupTime">
         <option value="">受け取り時間を選択してください</option>
+        <!-- JSで10分刻みを自動生成 -->
       </select>
 
       <!-- 名前 -->
@@ -519,16 +567,6 @@
       </div>
       <input type="tel" id="tel" placeholder="例）09012345678" />
 
-      <!-- コメント（トッピング指定・特記事項） -->
-      <div class="label">
-        <span class="label-icon">📝</span>
-        NOTE
-      </div>
-      <textarea
-        id="comment"
-        placeholder="トッピングの細かい指定、アレルギー、その他ご要望などがあればご記入ください。"
-      ></textarea>
-
       <!-- 送信ボタン -->
       <button class="submit" id="submitBtn">この内容で予約する</button>
       <div class="small">
@@ -539,30 +577,27 @@
 
   <script>
     // =========★ 設定エリア ★=========
-    const LIFF_ID = "2008627850-8BaKy2Zo"; // あなたの LIFF ID
-    const WEBAPP_URL =
-      "https://script.google.com/macros/s/AKfycbwH3scdv0QCxLj5luFPnzDIiCg2f6eL1Pjw3YkVEWpdUnM76KXQc06OPWuM5dadqPW6/exec";
+    const LIFF_ID = "2008627850-8BaKy2Zo"; // 例: "2008xxxxxx-xxxxx"
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzAdRgnTgowzxipSi_TCMBjVA6Pw6w78xCoijPtM_d_3AEy04wRO1NkOKaEWYIisX5j/exec"; // https://script.google.com/macros/s/～/exec
 
-    // サイズ別の金額（GAS側 PRICE_TABLE と必ず同じにする）
+    // 価格テーブル（お店の価格に合わせて変更OK）
     const PRICE_TABLE = {
       S: 800,
       M: 1000,
       L: 1200,
     };
 
-    const DAYS_AHEAD = 7; // 何日先まで予約を受けるか
-    const WEEKLY_CLOSED = [0]; // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
+    const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
+    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
     const CLOSED_DATES = [
-      // "YYYY-MM-DD" 形式で不定休を記入
-      // 例: "2025-12-10"
+      // 不定休 "YYYY-MM-DD"
+      // 例："2025-12-10"
     ];
-    // ===============================
+    // ==============================
 
-    let selectedSize = null;
     let selectedToppings = new Set();
     let userId = null;
 
-    // ▼ この日が休みか？
     function isClosedDate(dateObj) {
       const dayOfWeek = dateObj.getDay();
       if (WEEKLY_CLOSED.includes(dayOfWeek)) return true;
@@ -573,11 +608,9 @@
       const value = `${yyyy}-${mm}-${dd}`;
 
       if (CLOSED_DATES.includes(value)) return true;
-
       return false;
     }
 
-    // ▼ 日付プルダウン生成
     function populateDateOptions() {
       const select = document.getElementById("pickupDate");
       if (!select) return;
@@ -606,12 +639,11 @@
 
         const option = document.createElement("option");
         option.value = value;
-        option.textContent = i === 0 ? `本日 ${labelBase}` : labelBase;
+        option.textContent = (i === 0 ? `本日 ${labelBase}` : labelBase);
         select.appendChild(option);
       }
     }
 
-    // ▼ 時間プルダウン生成（10分刻み）
     function populateTimeOptions() {
       const select = document.getElementById("pickupTime");
       if (!select) return;
@@ -624,7 +656,7 @@
       select.appendChild(placeholder);
 
       const startHour = 10;
-      const endHour = 22;
+      const endHour   = 22;
       const intervalMinutes = 10;
 
       for (let h = startHour; h <= endHour; h++) {
@@ -640,28 +672,8 @@
       }
     }
 
-    // ▼ サイズボタン（金額表示 + 選択制御）
-    document.querySelectorAll(".size-button").forEach((btn) => {
-      const size = btn.dataset.size;
-      const priceValue = PRICE_TABLE[size];
-      if (priceValue) {
-        const priceSpan = document.createElement("span");
-        priceSpan.className = "price";
-        priceSpan.textContent = `¥${priceValue.toLocaleString()}`;
-        btn.appendChild(priceSpan);
-      }
-
-      btn.addEventListener("click", () => {
-        document
-          .querySelectorAll(".size-button")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        selectedSize = size;
-      });
-    });
-
-    // ▼ トッピング
-    document.querySelectorAll(".topping-chip").forEach((chip) => {
+    // ▼ トッピング（複数）
+    document.querySelectorAll(".topping-chip").forEach(chip => {
       chip.addEventListener("click", () => {
         const topping = chip.dataset.topping;
         if (chip.classList.contains("active")) {
@@ -674,7 +686,7 @@
       });
     });
 
-    // ▼ LIFF 初期化 & userId 取得（?showId=1 のときだけ表示）
+    // ▼ LIFF初期化（userId を表示できるように）
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
@@ -687,37 +699,38 @@
         const profile = await liff.getProfile();
         userId = profile.userId;
 
-        const params = new URLSearchParams(location.search);
-        if (params.get("showId") === "1") {
-          alert(
-            "このアカウントの userId は\n\n" +
-              userId +
-              "\n\nです。\n\nconfig.gs の ACAI_ADMIN_TO_ID にコピペしてください。"
-          );
-        }
+        // 一度 userId を確認したい場合に使えるメッセージ
+        // 必要なければコメントアウトしてOK
+        // alert("あなたの userId は\n\n" + userId + "\n\nです。");
       } catch (e) {
         alert("LIFF init error: " + e.message);
         console.error(e);
       }
     }
 
-    // ▼ 送信処理
-    async function submitForm() {
-      const pickupDate = document.getElementById("pickupDate").value;
-      const pickupTime = document.getElementById("pickupTime").value;
-      const customerName = document
-        .getElementById("customerName")
-        .value.trim();
-      const tel = document.getElementById("tel").value.trim();
-      const quantity = Number(
-        document.getElementById("quantity").value || "1"
-      );
-      const comment = document.getElementById("comment").value.trim();
+    // ▼ 初期処理
+    populateDateOptions();
+    populateTimeOptions();
+    initLiff();
 
-      if (!selectedSize) {
-        alert("サイズを選択してください。");
+    // ▼ 送信処理
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const qtyS = parseInt(document.getElementById("qtyS").value, 10) || 0;
+      const qtyM = parseInt(document.getElementById("qtyM").value, 10) || 0;
+      const qtyL = parseInt(document.getElementById("qtyL").value, 10) || 0;
+
+      const totalQty = qtyS + qtyM + qtyL;
+      if (totalQty === 0) {
+        alert("S / M / L のいずれかの数量を選択してください。");
         return;
       }
+
+      const pickupDate = document.getElementById("pickupDate").value;
+      const pickupTime = document.getElementById("pickupTime").value;
+      const customerName = document.getElementById("customerName").value.trim();
+      const tel = document.getElementById("tel").value.trim();
+      const comment = document.getElementById("comment").value.trim();
+
       if (!pickupDate) {
         alert("受け取り日を選択してください。");
         return;
@@ -734,20 +747,20 @@
         alert("電話番号を入力してください。");
         return;
       }
-      if (!quantity || quantity < 1) {
-        alert("個数を1以上に設定してください。");
-        return;
-      }
 
       const payload = {
-        size: selectedSize,
+        sizes: {
+          S: qtyS,
+          M: qtyM,
+          L: qtyL,
+        },
+        priceTable: PRICE_TABLE,
         pickupDate,
         pickupTime,
         customerName,
         tel,
         userId,
         toppings: Array.from(selectedToppings),
-        quantity,
         comment,
       };
 
@@ -758,25 +771,17 @@
       try {
         const res = await fetch(WEBAPP_URL, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const data = await res.json();
 
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          throw new Error("サーバーから不正な応答が返ってきました。");
+        if (data.status !== "ok") {
+          throw new Error(data.message || "unknown error");
         }
 
-        if (!res.ok || data.status !== "ok") {
-          throw new Error(data.message || "HTTPエラー " + res.status);
-        }
-
-        alert(
-          "ご予約ありがとうございます！\nLINEトークに予約内容をお送りしました。"
-        );
-
+        alert("ご予約を受け付けました。LINEのメッセージをご確認ください。");
         if (liff.isInClient()) {
           liff.closeWindow();
         }
@@ -787,13 +792,7 @@
         btn.disabled = false;
         btn.textContent = "この内容で予約する";
       }
-    }
-
-    // ▼ 初期処理
-    populateDateOptions();
-    populateTimeOptions();
-    initLiff();
-    document.getElementById("submitBtn").addEventListener("click", submitForm);
+    });
   </script>
 </body>
 </html>
