@@ -218,6 +218,13 @@
       font-weight: 500;
     }
 
+    .size-button span.price {
+      display: block;
+      font-size: 11px;
+      margin-top: 2px;
+      color: #fde68a;
+    }
+
     .size-button::after {
       content: "";
       position: absolute;
@@ -245,7 +252,8 @@
       font-weight: 700;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 10px 11px;
       font-size: 13px;
@@ -259,11 +267,28 @@
       appearance: none;
     }
 
-    input::placeholder {
+    textarea {
+      width: 100%;
+      padding: 10px 11px;
+      font-size: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.8);
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
       color: #6b7280;
     }
 
-    input:focus, select:focus {
+    input:focus,
+    select:focus,
+    textarea:focus {
       border-color: rgba(56,189,248,0.9);
       box-shadow:
         0 0 0 1px rgba(56,189,248,0.7),
@@ -409,6 +434,7 @@
         <div class="size-button" data-size="S">
           S
           <span class="sub">light &amp; snack</span>
+          <!-- price は JS で自動挿入 -->
         </div>
         <div class="size-button" data-size="M">
           M
@@ -419,6 +445,20 @@
           <span class="sub">for sharing</span>
         </div>
       </div>
+
+      <!-- 個数 -->
+      <div class="label">
+        <span class="label-icon">🥤</span>
+        QUANTITY
+      </div>
+      <select id="quantity">
+        <option value="1">1杯</option>
+        <option value="2">2杯</option>
+        <option value="3">3杯</option>
+        <option value="4">4杯</option>
+        <option value="5">5杯</option>
+      </select>
+      <div class="helper">※ 複数杯ご注文の場合はこちらで個数を指定してください。</div>
 
       <!-- トッピング -->
       <div class="label" style="margin-top: 14px;">
@@ -445,7 +485,7 @@
           <span class="icon">💪</span><span>プロテイン</span>
         </div>
       </div>
-      <div class="helper">※ トッピングは複数選択できます（未選択でもOK）。</div>
+      <div class="helper">※ チップで選択したうえで、細かい指定は下のコメント欄へ。</div>
 
       <!-- 受け取り日 -->
       <div class="label">
@@ -479,6 +519,16 @@
       </div>
       <input type="tel" id="tel" placeholder="例）09012345678" />
 
+      <!-- コメント（トッピング指定・特記事項） -->
+      <div class="label">
+        <span class="label-icon">📝</span>
+        NOTE
+      </div>
+      <textarea
+        id="comment"
+        placeholder="トッピングの細かい指定、アレルギー、その他ご要望などがあればご記入ください。"
+      ></textarea>
+
       <!-- 送信ボタン -->
       <button class="submit" id="submitBtn">この内容で予約する</button>
       <div class="small">
@@ -490,9 +540,18 @@
   <script>
     // =========★ 設定エリア ★=========
     const LIFF_ID = "2008627850-8BaKy2Zo"; // あなたの LIFF ID
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzs12GNMZE1LQDANhetyNdCqCCbd4zzN01B0DARsP2A6ukMDqJBAfQ6viWMF3lE5ree/exec";
-    const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
-    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
+    const WEBAPP_URL =
+      "https://script.google.com/macros/s/AKfycbzBECVnzGAiQpfzoTH6WiEyI7pC5HixCtaNKdGyHnaX40dwTg6Hm0e7c8nRuz9Xz1zg/exec";
+
+    // サイズ別の金額（GAS側 PRICE_TABLE と必ず同じにする）
+    const PRICE_TABLE = {
+      S: 800,
+      M: 1000,
+      L: 1200,
+    };
+
+    const DAYS_AHEAD = 7; // 何日先まで予約を受けるか
+    const WEEKLY_CLOSED = [0]; // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
     const CLOSED_DATES = [
       // "YYYY-MM-DD" 形式で不定休を記入
       // 例: "2025-12-10"
@@ -547,7 +606,7 @@
 
         const option = document.createElement("option");
         option.value = value;
-        option.textContent = (i === 0 ? `本日 ${labelBase}` : labelBase);
+        option.textContent = i === 0 ? `本日 ${labelBase}` : labelBase;
         select.appendChild(option);
       }
     }
@@ -565,7 +624,7 @@
       select.appendChild(placeholder);
 
       const startHour = 10;
-      const endHour   = 22;
+      const endHour = 22;
       const intervalMinutes = 10;
 
       for (let h = startHour; h <= endHour; h++) {
@@ -581,19 +640,28 @@
       }
     }
 
-    // ▼ サイズボタン
-    document.querySelectorAll(".size-button").forEach(btn => {
+    // ▼ サイズボタン（金額表示 + 選択制御）
+    document.querySelectorAll(".size-button").forEach((btn) => {
+      const size = btn.dataset.size;
+      const priceValue = PRICE_TABLE[size];
+      if (priceValue) {
+        const priceSpan = document.createElement("span");
+        priceSpan.className = "price";
+        priceSpan.textContent = `¥${priceValue.toLocaleString()}`;
+        btn.appendChild(priceSpan);
+      }
+
       btn.addEventListener("click", () => {
         document
           .querySelectorAll(".size-button")
-          .forEach(b => b.classList.remove("active"));
+          .forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        selectedSize = btn.dataset.size;
+        selectedSize = size;
       });
     });
 
     // ▼ トッピング
-    document.querySelectorAll(".topping-chip").forEach(chip => {
+    document.querySelectorAll(".topping-chip").forEach((chip) => {
       chip.addEventListener("click", () => {
         const topping = chip.dataset.topping;
         if (chip.classList.contains("active")) {
@@ -606,7 +674,7 @@
       });
     });
 
-    // ▼ LIFF 初期化 & userId 取得
+    // ▼ LIFF 初期化 & userId 取得（?showId=1 のときだけ表示）
     async function initLiff() {
       try {
         await liff.init({ liffId: LIFF_ID });
@@ -619,13 +687,12 @@
         const profile = await liff.getProfile();
         userId = profile.userId;
 
-        // LIFF URL の末尾に ?showId=1 を付けて開いたときだけ userId を表示
         const params = new URLSearchParams(location.search);
         if (params.get("showId") === "1") {
           alert(
             "このアカウントの userId は\n\n" +
-            userId +
-            "\n\nです。\n\nconfig.gs の ACAI_ADMIN_TO_ID にコピペしてください。"
+              userId +
+              "\n\nです。\n\nconfig.gs の ACAI_ADMIN_TO_ID にコピペしてください。"
           );
         }
       } catch (e) {
@@ -636,10 +703,16 @@
 
     // ▼ 送信処理
     async function submitForm() {
-      const pickupDate   = document.getElementById("pickupDate").value;
-      const pickupTime   = document.getElementById("pickupTime").value;
-      const customerName = document.getElementById("customerName").value.trim();
-      const tel          = document.getElementById("tel").value.trim();
+      const pickupDate = document.getElementById("pickupDate").value;
+      const pickupTime = document.getElementById("pickupTime").value;
+      const customerName = document
+        .getElementById("customerName")
+        .value.trim();
+      const tel = document.getElementById("tel").value.trim();
+      const quantity = Number(
+        document.getElementById("quantity").value || "1"
+      );
+      const comment = document.getElementById("comment").value.trim();
 
       if (!selectedSize) {
         alert("サイズを選択してください。");
@@ -661,6 +734,10 @@
         alert("電話番号を入力してください。");
         return;
       }
+      if (!quantity || quantity < 1) {
+        alert("個数を1以上に設定してください。");
+        return;
+      }
 
       const payload = {
         size: selectedSize,
@@ -670,6 +747,8 @@
         tel,
         userId,
         toppings: Array.from(selectedToppings),
+        quantity,
+        comment,
       };
 
       const btn = document.getElementById("submitBtn");
@@ -679,7 +758,7 @@
       try {
         const res = await fetch(WEBAPP_URL, {
           method: "POST",
-          body: JSON.stringify(payload),  // Content-Type ヘッダなし（GAS側でJSON.parse）
+          body: JSON.stringify(payload),
         });
 
         const text = await res.text();
@@ -691,10 +770,12 @@
         }
 
         if (!res.ok || data.status !== "ok") {
-          throw new Error(data.message || ("HTTPエラー " + res.status));
+          throw new Error(data.message || "HTTPエラー " + res.status);
         }
 
-        alert("ご予約ありがとうございます！\nLINEトークに予約内容をお送りしました。");
+        alert(
+          "ご予約ありがとうございます！\nLINEトークに予約内容をお送りしました。"
+        );
 
         if (liff.isInClient()) {
           liff.closeWindow();
