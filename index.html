@@ -611,30 +611,29 @@
       });
     });
 
-    // ▼ LIFF初期化
-    async function initLiff() {
-      try {
-        await liff.init({ liffId: LIFF_ID });
-        if (!liff.isLoggedIn()) {
-          liff.login();
-          return;
-        }
-        const profile = await liff.getProfile();
-        userId = profile.userId;
+// ▼ LIFF初期化（userId を強制表示するバージョン）
+async function initLiff() {
+  try {
+    await liff.init({ liffId: LIFF_ID });
 
+    // ログインしてなければログインさせる
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
 
-    // ★★★ ここを追加 ★★★
-    console.log("管理者用 userId:", userId);
-    alert("管理者用 userId は\n\n" + userId + "\n\nです。これを config.gs にコピペしてください。");
-    // ★★★ ここまで ★★★
+    // プロフィール取得
+    const profile = await liff.getProfile();
+    userId = profile.userId;
 
-        
-        // 必要なら displayName を初期値にセット
-        // document.getElementById("customerName").value = profile.displayName;
+    // ★ここで必ず userId を表示させる★
+    alert("あなたの userId は\n\n" + userId + "\n\nです。\n\nこれを config.gs の ACAI_ADMIN_TO_ID にコピペしてください。");
+
   } catch (e) {
     alert("LIFF init error: " + e.message);
     console.error(e);
   }
+}
 
     // ▼ 初期処理
     populateDateOptions();
