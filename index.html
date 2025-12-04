@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  />
+  <title>アサイーボウル予約 | CAFE & BAR</title>
+
+  <style>
+    :root {
+      --bg-dark: #020617;
+      --accent: #fb7185;
+      --accent2: #38bdf8;
+      --accent-gold: #facc15;
+      --text-main: #f9fafb;
+      --text-sub: #9ca3af;
+      --border-soft: rgba(148,163,184,0.4);
+      --chip-bg: rgba(15,23,42,0.8);
+      --chip-active: #f97316;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-weight: 600;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 16px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 0% 0%, #1e293b 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, #0f172a 0, transparent 60%),
+        radial-gradient(circle at 0% 100%, #4c1d95 0, #020617 55%);
+      color: var(--text-main);
+      font-family:
+        "Hiragino Maru Gothic ProN",
+        "ヒラギノ丸ゴ ProN",
+        "Hiragino Maru Gothic Pro",
+        "ヒラギノ丸ゴ Pro",
+        "SF Pro Rounded",
+        "M PLUS Rounded 1c",
+        "Arial Rounded MT Bold",
+        system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      padding: 20px 18px 18px;
+      border-radius: 24px;
+      position: relative;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.15), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(248,113,113,0.15), transparent 55%),
+                  rgba(15,23,42,0.75);
+      box-shadow:
+        0 24px 50px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(148,163,184,0.35);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .card::before,
+    .card::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(10px);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .card::before {
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      background: conic-gradient(
+        from 210deg,
+        rgba(56,189,248,0.9),
+        rgba(248,113,113,0.7),
+        rgba(250,204,21,0.8),
+        transparent 70%
+      );
+    }
+
+    .card::after {
+      bottom: -80px;
+      left: -80px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(56,189,248,0.7), transparent 60%);
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 20%, #fbbf24, #ea580c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.9),
+        0 0 18px rgba(250,204,21,0.9);
+      font-size: 22px;
+      text-shadow: 0 0 10px rgba(250,250,250,0.9);
+    }
+
+    .title-wrap {
+      flex: 1;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.04em;
+      text-shadow:
+        0 0 6px rgba(248,250,252,0.9),
+        0 0 18px rgba(56,189,248,0.7);
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.8);
+      color: #bae6fd;
+      background: rgba(15,23,42,0.7);
+      box-shadow: 0 0 12px rgba(56,189,248,0.8);
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      width: 100%;
+      margin: 12px 0 10px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(248,250,252,0.5),
+        transparent
+      );
+      box-shadow: 0 0 12px rgba(248,250,252,0.5);
+      opacity: 0.7;
+    }
+
+    .label {
+      font-size: 12px;
+      margin: 12px 0 6px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .label-icon {
+      font-size: 15px;
+      filter: drop-shadow(0 0 6px rgba(250,250,250,0.7));
+    }
+
+    .size-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .size-button {
+      flex: 1;
+      padding: 10px 0 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
+      text-align: center;
+      font-size: 13px;
+      cursor: pointer;
+      color: #e5e7eb;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .size-button span.sub {
+      display: block;
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .size-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(248,250,252,0.35), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.18s ease-out;
+    }
+
+    .size-button:active::after {
+      opacity: 0.8;
+    }
+
+    .size-button.active {
+      background: radial-gradient(circle at top, #fb7185, #f97316);
+      border-color: rgba(254,249,195,0.9);
+      color: #111827;
+      box-shadow:
+        0 0 14px rgba(251,113,133,0.9),
+        0 12px 22px rgba(15,23,42,0.9);
+    }
+
+    .size-button.active span.sub {
+      color: #111827;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 11px;
+      font-size: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.8);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(56,189,248,0.9);
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.7),
+        0 0 18px rgba(56,189,248,0.7);
+    }
+
+    /* ▼ セレクトの▼アイコン */
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) calc(50% - 2px),
+        calc(100% - 10px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 26px;
+    }
+
+    .toppings-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .topping-chip {
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: var(--chip-bg);
+      font-size: 11px;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .topping-chip span.icon {
+      font-size: 13px;
+    }
+
+    .topping-chip.active {
+      background: radial-gradient(circle at top, var(--chip-active), #ea580c);
+      border-color: rgba(251,191,36,0.9);
+      color: #111827;
+      box-shadow:
+        0 0 14px rgba(251,191,36,0.8),
+        0 10px 20px rgba(15,23,42,0.9);
+    }
+
+    .topping-chip.active span.icon {
+      filter: drop-shadow(0 0 6px rgba(250,250,250,0.9));
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    button.submit {
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px 0;
+      font-size: 14px;
+      font-weight: 900;
+      border-radius: 999px;
+      border: none;
+      color: #020617;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 10% 0, #fefce8, #facc15 25%, transparent 55%),
+        linear-gradient(135deg, #fb7185, #f97316);
+      box-shadow:
+        0 0 14px rgba(251,113,133,0.9),
+        0 18px 30px rgba(0,0,0,0.9);
+      text-shadow: 0 1px 0 rgba(248,250,252,0.7);
+    }
+
+    button.submit::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 15% 0, rgba(255,255,255,0.85), transparent 55%);
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+      pointer-events: none;
+    }
+
+    button.submit:active::after {
+      opacity: 1;
+    }
+
+    button.submit:disabled {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .small {
+      font-size: 10px;
+      color: var(--text-sub);
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+
+  <!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+
+<body>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-header">
+        <div class="logo-circle">🍸</div>
+        <div class="title-wrap">
+          <h1>
+            Açaí Order
+            <span class="badge">CAFE &amp; BAR</span>
+          </h1>
+          <div class="subtitle">
+            ネオンが灯る前に、アサイーボウルをお好みのスタイルで。
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- サイズ -->
+      <div class="label">
+        <span class="label-icon">🧁</span>
+        SIZE
+      </div>
+      <div class="size-buttons">
+        <div class="size-button" data-size="S">
+          S
+          <span class="sub">light &amp; snack</span>
+        </div>
+        <div class="size-button" data-size="M">
+          M
+          <span class="sub">classic mood</span>
+        </div>
+        <div class="size-button" data-size="L">
+          L
+          <span class="sub">for sharing</span>
+        </div>
+      </div>
+
+      <!-- トッピング -->
+      <div class="label" style="margin-top: 14px;">
+        <span class="label-icon">✨</span>
+        TOPPINGS
+      </div>
+      <div class="toppings-wrap" id="toppingsWrap">
+        <div class="topping-chip" data-topping="バナナ">
+          <span class="icon">🍌</span><span>バナナ</span>
+        </div>
+        <div class="topping-chip" data-topping="グラノーラ">
+          <span class="icon">🥣</span><span>グラノーラ</span>
+        </div>
+        <div class="topping-chip" data-topping="ココナッツ">
+          <span class="icon">🥥</span><span>ココナッツ</span>
+        </div>
+        <div class="topping-chip" data-topping="はちみつ">
+          <span class="icon">🍯</span><span>はちみつ</span>
+        </div>
+        <div class="topping-chip" data-topping="アーモンド">
+          <span class="icon">🌰</span><span>アーモンド</span>
+        </div>
+        <div class="topping-chip" data-topping="プロテイン">
+          <span class="icon">💪</span><span>プロテイン</span>
+        </div>
+      </div>
+      <div class="helper">※ トッピングは複数選択できます（未選択でもOK）。</div>
+
+      <!-- 受け取り日（セレクト） -->
+      <div class="label">
+        <span class="label-icon">📅</span>
+        DATE
+      </div>
+      <select id="pickupDate">
+        <option value="">受け取り日を選択してください</option>
+        <!-- JSで営業日のみ生成 -->
+      </select>
+
+      <!-- 受け取り時間（10分刻み） -->
+      <div class="label">
+        <span class="label-icon">⏰</span>
+        PICKUP TIME
+      </div>
+      <select id="pickupTime">
+        <option value="">受け取り時間を選択してください</option>
+        <!-- JSで10分刻みを自動生成 -->
+      </select>
+
+      <!-- 名前 -->
+      <div class="label">
+        <span class="label-icon">👤</span>
+        NAME
+      </div>
+      <input type="text" id="customerName" placeholder="例）山田太郎" />
+
+      <!-- 電話番号 -->
+      <div class="label">
+        <span class="label-icon">📞</span>
+        TEL
+      </div>
+      <input type="tel" id="tel" placeholder="例）09012345678" />
+
+      <!-- 送信ボタン -->
+      <button class="submit" id="submitBtn">この内容で予約する</button>
+      <div class="small">
+        送信後、LINEトークに「予約完了メッセージ」だけが届きます。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========★ 設定エリア（ここだけ触ればOK）★ =========
+    const LIFF_ID = "YOUR_LIFF_ID_HERE";          // ★ LIFF ID
+    const WEBAPP_URL = "YOUR_WEB_APP_URL_HERE";   // ★ GAS WebアプリのURL
+
+    const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
+    const WEEKLY_CLOSED = [0];   // 毎週の定休日（0:日,1:月,2:火,3:水,4:木,5:金,6:土）
+                                 // 例）日月休みなら [0,1]、曜日休みナシなら []
+
+    const CLOSED_DATES = [
+      // 不定休の日を "YYYY-MM-DD" 形式で書くだけ
+      // 例："2025-12-10", "2025-12-25"
+    ];
+    // ===============================================
+
+    let selectedSize = null;
+    let selectedToppings = new Set();
+    let userId = null;
+
+    // ▼ この日が休みかどうか？
+    function isClosedDate(dateObj) {
+      const dayOfWeek = dateObj.getDay();
+      if (WEEKLY_CLOSED.includes(dayOfWeek)) return true;
+
+      const yyyy = dateObj.getFullYear();
+      const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const dd = String(dateObj.getDate()).padStart(2, "0");
+      const value = `${yyyy}-${mm}-${dd}`;
+
+      if (CLOSED_DATES.includes(value)) return true;
+
+      return false;
+    }
+
+    // ▼ 日付プルダウン生成（営業日のみ）
+    function populateDateOptions() {
+      const select = document.getElementById("pickupDate");
+      if (!select) return;
+
+      select.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "受け取り日を選択してください";
+      placeholder.selected = true;
+      select.appendChild(placeholder);
+
+      const youbi = ["日", "月", "火", "水", "木", "金", "土"];
+
+      const today = new Date();
+      for (let i = 0; i <= DAYS_AHEAD; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() + i);
+
+        if (isClosedDate(d)) continue;  // 休みの日は表示しない
+
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const value = `${yyyy}-${mm}-${dd}`;
+        const labelBase = `${mm}/${dd} (${youbi[d.getDay()]})`;
+
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = (i === 0 ? `本日 ${labelBase}` : labelBase);
+        select.appendChild(option);
+      }
+    }
+
+    // ▼ 時間プルダウン生成（10分刻み）
+    function populateTimeOptions() {
+      const select = document.getElementById("pickupTime");
+      if (!select) return;
+
+      select.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "受け取り時間を選択してください";
+      placeholder.selected = true;
+      select.appendChild(placeholder);
+
+      const startHour = 10;          // 営業開始時間（10時）
+      const endHour   = 22;          // 営業終了時間（22時）
+      const intervalMinutes = 10;    // 10分刻み
+
+      for (let h = startHour; h <= endHour; h++) {
+        for (let m = 0; m < 60; m += intervalMinutes) {
+          const hh = String(h).padStart(2, "0");
+          const mm = String(m).padStart(2, "0");
+          const value = `${hh}:${mm}`;
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        }
+      }
+    }
+
+    // ▼ サイズボタン
+    document.querySelectorAll(".size-button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".size-button")
+          .forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedSize = btn.dataset.size;
+      });
+    });
+
+    // ▼ トッピング（複数）
+    document.querySelectorAll(".topping-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const topping = chip.dataset.topping;
+        if (chip.classList.contains("active")) {
+          chip.classList.remove("active");
+          selectedToppings.delete(topping);
+        } else {
+          chip.classList.add("active");
+          selectedToppings.add(topping);
+        }
+      });
+    });
+
+    // ▼ LIFF初期化
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+        const profile = await liff.getProfile();
+        userId = profile.userId;
+        // 必要なら displayName を初期値にセット
+        // document.getElementById("customerName").value = profile.displayName;
+      } catch (e) {
+        alert("LIFFの初期化に失敗しました。時間をおいて再度お試しください。");
+        console.error(e);
+      }
+    }
+
+    // ▼ 初期処理
+    populateDateOptions();
+    populateTimeOptions();
+    initLiff();
+
+    // ▼ 送信処理
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const pickupDate = document.getElementById("pickupDate").value;
+      const pickupTime = document.getElementById("pickupTime").value;
+      const customerName = document.getElementById("customerName").value.trim();
+      const tel = document.getElementById("tel").value.trim();
+
+      if (!selectedSize) {
+        alert("サイズを選択してください。");
+        return;
+      }
+      if (!pickupDate) {
+        alert("受け取り日を選択してください。");
+        return;
+      }
+      if (!pickupTime) {
+        alert("受け取り時間を選択してください。");
+        return;
+      }
+      if (!customerName) {
+        alert("お名前を入力してください。");
+        return;
+      }
+      if (!tel) {
+        alert("電話番号を入力してください。");
+        return;
+      }
+
+      const payload = {
+        size: selectedSize,
+        pickupDate,
+        pickupTime,
+        customerName,
+        tel,
+        userId,
+        toppings: Array.from(selectedToppings)
+      };
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "送信中…";
+
+      try {
+        const res = await fetch(WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const data = await res.json();
+
+        alert("ご予約を受け付けました。LINEのメッセージをご確認ください。");
+        if (liff.isInClient()) {
+          liff.closeWindow();
+        }
+      } catch (e) {
+        console.error(e);
+        alert("エラーが発生しました。時間をおいて再度お試しください。");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "この内容で予約する";
+      }
+    });
+  </script>
+</body>
+</html>
