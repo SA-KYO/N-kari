@@ -491,7 +491,7 @@
 
   <script>
     // =========★ 設定エリア（ここだけ触ればOK）★ =========
-    const LIFF_ID = "YOUR_LIFF_ID_HERE";          // ★ LIFF ID
+    const LIFF_ID = "2008627850-8BaKy2Zo";          // ★ LIFF ID
     const WEBAPP_URL = "YOUR_WEB_APP_URL_HERE";   // ★ GAS WebアプリのURL
 
     const DAYS_AHEAD = 7;        // 何日先まで予約を受けるか
@@ -621,6 +621,14 @@
         }
         const profile = await liff.getProfile();
         userId = profile.userId;
+
+
+    // ★★★ ここを追加 ★★★
+    console.log("管理者用 userId:", userId);
+    alert("管理者用 userId は\n\n" + userId + "\n\nです。これを config.gs にコピペしてください。");
+    // ★★★ ここまで ★★★
+
+        
         // 必要なら displayName を初期値にセット
         // document.getElementById("customerName").value = profile.displayName;
       } catch (e) {
